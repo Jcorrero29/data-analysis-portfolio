@@ -1,0 +1,26 @@
+job-market-skills-analysis/
+│
+├── README.md
+│
+├── data/
+│   ├── raw/
+│   │   └── job_postings_raw.csv
+│   ├── cleaned/
+│   │   └── job_postings_cleaned.csv
+│
+├── sql/
+│   ├── create_tables.sql
+│   ├── clean_data.sql
+│   ├── skill_frequency.sql
+│   ├── job_title_analysis.sql
+│
+├── notebooks/
+│   └── job_market_analysis.ipynb
+│
+├── visuals/
+│   ├── top_skills_bar_chart.png
+│   ├── technical_vs_soft_skills.png
+│   └── dashboard_screenshot.png
+│
+└── docs/
+    └── project_summary.pdf
