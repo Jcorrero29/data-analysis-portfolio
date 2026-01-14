@@ -1,26 +1,108 @@
-job-market-skills-analysis/
-│
-├── README.md
-│
-├── data/
-│   ├── raw/
-│   │   └── job_postings_raw.csv
-│   ├── cleaned/
-│   │   └── job_postings_cleaned.csv
-│
-├── sql/
-│   ├── create_tables.sql
-│   ├── clean_data.sql
-│   ├── skill_frequency.sql
-│   ├── job_title_analysis.sql
-│
-├── notebooks/
-│   └── job_market_analysis.ipynb
-│
-├── visuals/
-│   ├── top_skills_bar_chart.png
-│   ├── technical_vs_soft_skills.png
-│   └── dashboard_screenshot.png
-│
-└── docs/
-    └── project_summary.pdf
+/* 
+Project: Job Market & Skills Demand Analysis
+Purpose: Clean and prepare job posting data for skills analysis
+Author: Joshua Correro
+*/
+
+
+SELECT *
+FROM PortfolioProject.dbo.JobPostings;
+
+
+
+
+SELECT DatePosted, CONVERT(date, DatePosted)
+FROM PortfolioProject.dbo.JobPostings;
+
+UPDATE PortfolioProject.dbo.JobPostings
+SET DatePosted = CONVERT(date, DatePosted);
+
+
+ALTER TABLE PortfolioProject.dbo.JobPostings
+ADD DatePostedConverted DATE;
+
+UPDATE PortfolioProject.dbo.JobPostings
+SET DatePostedConverted = CONVERT(date, DatePosted);
+
+
+
+SELECT DISTINCT JobTitle
+FROM PortfolioProject.dbo.JobPostings
+ORDER BY JobTitle;
+
+
+
+UPDATE PortfolioProject.dbo.JobPostings
+SET JobTitle = CASE
+    WHEN JobTitle LIKE '%Junior%' THEN 'Entry-Level Data Analyst'
+    WHEN JobTitle LIKE '%Associate%' THEN 'Entry-Level Data Analyst'
+    WHEN JobTitle LIKE '%Data Analyst%' THEN 'Data Analyst'
+    ELSE JobTitle
+END;
+
+
+
+SELECT *
+FROM PortfolioProject.dbo.JobPostings
+WHERE Skills IS NULL;
+
+UPDATE a
+SET Skills = b.Skills
+FROM PortfolioProject.dbo.JobPostings a
+JOIN PortfolioProject.dbo.JobPostings b
+    ON a.JobTitle = b.JobTitle
+    AND a.JobID <> b.JobID
+WHERE a.Skills IS NULL;
+
+
+
+UPDATE PortfolioProject.dbo.JobPostings
+SET Skills = REPLACE(Skills, 'SQL Server', 'SQL');
+
+UPDATE PortfolioProject.dbo.JobPostings
+SET Skills = REPLACE(Skills, 'MS Excel', 'Excel');
+
+UPDATE PortfolioProject.dbo.JobPostings
+SET Skills = REPLACE(Skills, 'PowerBI', 'Power BI');
+
+
+
+SELECT
+    JobID,
+    TRIM(value) AS Skill
+FROM PortfolioProject.dbo.JobPostings
+CROSS APPLY STRING_SPLIT(Skills, ',');
+
+
+SELECT DISTINCT Remote, COUNT(Remote)
+FROM PortfolioProject.dbo.JobPostings
+GROUP BY Remote
+ORDER BY 2;
+
+UPDATE PortfolioProject.dbo.JobPostings
+SET Remote = CASE
+    WHEN Remote = 'Y' THEN 'Yes'
+    WHEN Remote = 'N' THEN 'No'
+    ELSE Remote
+END;
+
+
+WITH RowNumCTE AS (
+    SELECT *,
+        ROW_NUMBER() OVER (
+            PARTITION BY JobTitle, Company, Location, DatePosted
+            ORDER BY JobID
+        ) AS row_num
+    FROM PortfolioProject.dbo.JobPostings
+)
+DELETE
+FROM RowNumCTE
+WHERE row_num > 1;
+
+
+ALTER TABLE PortfolioProject.dbo.JobPostings
+DROP COLUMN JobDescription, CompanyWebsite;
+
+
+SELECT *
+FROM PortfolioProject.dbo.JobPostings
