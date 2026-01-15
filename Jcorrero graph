@@ -1,12 +1,23 @@
 /* 
 Project: Job Market & Skills Demand Analysis
-Purpose: Clean and prepare job posting data for skills analysis
-Author: Joshua Correro
-*/
+Description : Clean and prepare job posting data for skills analysis
+Author: correro,Joshua 
+email: joshuacorrero@gmail.com
+url: https://jcorrero.github.io/data-analysis-portfolio
+skills: SQL, data cleaning & data preparation , Exploratory data analysis, data validation & quality checks
 
 
 SELECT *
 FROM PortfolioProject.dbo.JobPostings;
+*social 
+linkedin:
+www.linkedin.com/in/
+joshua-correro
+github:https://github.com/Jcorrero29/data-analysis-portfolio/edit/main/Jcorrero%20graph
+
+email url: joshuacorrero@gmail.com
+
+Location: Aubrey, Texas
 
 
 
